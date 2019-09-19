@@ -24,8 +24,8 @@ doc/api/
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
 *.jks
-**/android/webview_flutter.iml
-**/android/**/app.iml
+**/android/*.iml
+**/android/**/*.iml
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
