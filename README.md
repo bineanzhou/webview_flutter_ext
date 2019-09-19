@@ -4,6 +4,13 @@
 
 A Flutter plugin that provides a WebView widget.
 
+添加依赖库：
+
+```
+dependencies:
+  webview_flutter:
+    git: https://github.com/bineanzhou/webview_flutter_ext.git
+```
 On iOS the WebView widget is backed by a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview);
 On Android the WebView widget is backed by a [WebView](https://developer.android.com/reference/android/webkit/WebView).
 
