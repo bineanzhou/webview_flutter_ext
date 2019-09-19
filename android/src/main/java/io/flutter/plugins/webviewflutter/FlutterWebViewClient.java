@@ -8,6 +8,8 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -25,10 +27,12 @@ class FlutterWebViewClient {
   private static final String TAG = "FlutterWebViewClient";
   private final MethodChannel methodChannel;
   private boolean hasNavigationDelegate;
+  private boolean hasConsoleMessageDelegate;
 
   FlutterWebViewClient(MethodChannel methodChannel) {
     this.methodChannel = methodChannel;
   }
+
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -67,6 +71,8 @@ class FlutterWebViewClient {
     return true;
   }
 
+
+
   private void onPageFinished(WebView view, String url) {
     Map<String, Object> args = new HashMap<>();
     args.put("url", url);
@@ -85,6 +91,12 @@ class FlutterWebViewClient {
       methodChannel.invokeMethod("navigationRequest", args);
     }
   }
+  private void notifyOnConsoleMessageRequest(ConsoleMessage consoleMessage){
+    HashMap<String, Object> args = new HashMap<>();
+    args.put("levelName", consoleMessage.messageLevel().name());
+    args.put("message", consoleMessage.message());
+    methodChannel.invokeMethod("onConsoleMessageRequest", args);
+  }
 
   // This method attempts to avoid using WebViewClientCompat due to bug
   // https://bugs.chromium.org/p/chromium/issues/detail?id=925887. Also, see
@@ -97,6 +109,21 @@ class FlutterWebViewClient {
     }
 
     return internalCreateWebViewClientCompat();
+  }
+
+  WebChromeClient createWebChromeClient(boolean hasConsoleMessageDelegate) {
+    this.hasConsoleMessageDelegate = hasConsoleMessageDelegate;
+
+    return new WebChromeClient(){
+      @Override
+      public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+        if (!FlutterWebViewClient.this.hasConsoleMessageDelegate) {
+          return super.onConsoleMessage(consoleMessage);
+        }
+        notifyOnConsoleMessageRequest(consoleMessage);
+        return true;
+      }
+    };
   }
 
   private WebViewClient internalCreateWebViewClient() {

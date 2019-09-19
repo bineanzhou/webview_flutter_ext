@@ -23,6 +23,15 @@ abstract class WebViewPlatformCallbacksHandler {
   /// If true is returned the navigation is allowed, otherwise it is blocked.
   bool onNavigationRequest({String url, bool isForMainFrame});
 
+//  public enum MessageLevel {
+//  TIP,
+//  LOG,
+//  WARNING,
+//  ERROR,
+//  DEBUG
+//};
+  bool onConsoleMessage({String levelName, String message});
+
   /// Invoked by [WebViewPlatformController] when a page has finished loading.
   void onPageFinished(String url);
 }
@@ -223,6 +232,7 @@ class WebSettings {
   WebSettings({
     this.javascriptMode,
     this.hasNavigationDelegate,
+    this.hasConsoleMessageDelegate,
     this.debuggingEnabled,
     @required this.userAgent,
   }) : assert(userAgent != null);
@@ -232,6 +242,8 @@ class WebSettings {
 
   /// Whether the [WebView] has a [NavigationDelegate] set.
   final bool hasNavigationDelegate;
+
+  final bool hasConsoleMessageDelegate;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -250,7 +262,7 @@ class WebSettings {
 
   @override
   String toString() {
-    return 'WebSettings(javascriptMode: $javascriptMode, hasNavigationDelegate: $hasNavigationDelegate, debuggingEnabled: $debuggingEnabled, userAgent: $userAgent,)';
+    return 'WebSettings(javascriptMode: $javascriptMode, hasNavigationDelegate: $hasNavigationDelegate, hasConsoleMessageDelegate: $hasConsoleMessageDelegate,debuggingEnabled: $debuggingEnabled, userAgent: $userAgent,)';
   }
 }
 

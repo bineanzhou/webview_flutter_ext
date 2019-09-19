@@ -52,6 +52,38 @@ class NavigationRequest {
   }
 }
 
+enum ConsoleMessageLevel {
+  TIP,
+  LOG,
+  WARNING,
+  ERROR,
+  DEBUG
+
+
+}
+
+class ConsoleMessage {
+  final ConsoleMessageLevel messageLevel;
+  final String message;
+
+  ConsoleMessage._(this.messageLevel, this.message);
+
+  static ConsoleMessageLevel findLevel(String levelName) {
+    for (ConsoleMessageLevel msgLevel in ConsoleMessageLevel.values) {
+      String curName = "$msgLevel";
+      if (curName.contains(levelName)) {
+        return msgLevel;
+      }
+    }
+    return ConsoleMessageLevel.LOG;
+  }
+
+  @override
+  String toString() {
+    return '$runtimeType(message: $message, messageLevel: $messageLevel)';
+  }
+}
+
 /// A decision on how to handle a navigation request.
 enum NavigationDecision {
   /// Prevent the navigation from taking place.
@@ -68,6 +100,9 @@ enum NavigationDecision {
 ///
 /// See also: [WebView.navigationDelegate].
 typedef NavigationDecision NavigationDelegate(NavigationRequest navigation);
+typedef NavigationDecision ConsoleMessageDelegate(ConsoleMessage consoleMessage);
+
+typedef void OnConsoleMessage();
 
 /// Signature for when a [WebView] has finished loading a page.
 typedef void PageFinishedCallback(String url);
@@ -136,6 +171,7 @@ class WebView extends StatefulWidget {
     this.initialUrl,
     this.javascriptMode = JavascriptMode.disabled,
     this.javascriptChannels,
+    this.consoleMessageDelegate,
     this.navigationDelegate,
     this.gestureRecognizers,
     this.onPageFinished,
@@ -252,6 +288,8 @@ class WebView extends StatefulWidget {
   ///       webview, and frames will be opened in the main frame.
   ///     * When a navigationDelegate is set HTTP requests do not include the HTTP referer header.
   final NavigationDelegate navigationDelegate;
+
+  final ConsoleMessageDelegate consoleMessageDelegate;
 
   /// Invoked when a page has finished loading.
   ///
@@ -371,6 +409,7 @@ WebSettings _webSettingsFromWidget(WebView widget) {
   return WebSettings(
     javascriptMode: widget.javascriptMode,
     hasNavigationDelegate: widget.navigationDelegate != null,
+    hasConsoleMessageDelegate: widget.consoleMessageDelegate != null,
     debuggingEnabled: widget.debuggingEnabled,
     userAgent: WebSetting<String>.of(widget.userAgent),
   );
@@ -381,15 +420,18 @@ WebSettings _clearUnchangedWebSettings(
     WebSettings currentValue, WebSettings newValue) {
   assert(currentValue.javascriptMode != null);
   assert(currentValue.hasNavigationDelegate != null);
+  assert(currentValue.hasConsoleMessageDelegate != null);
   assert(currentValue.debuggingEnabled != null);
   assert(currentValue.userAgent.isPresent);
   assert(newValue.javascriptMode != null);
   assert(newValue.hasNavigationDelegate != null);
+  assert(newValue.hasConsoleMessageDelegate != null);
   assert(newValue.debuggingEnabled != null);
   assert(newValue.userAgent.isPresent);
 
   JavascriptMode javascriptMode;
   bool hasNavigationDelegate;
+  bool hasConsoleMessageDelegate;
   bool debuggingEnabled;
   WebSetting<String> userAgent = WebSetting<String>.absent();
   if (currentValue.javascriptMode != newValue.javascriptMode) {
@@ -398,6 +440,11 @@ WebSettings _clearUnchangedWebSettings(
   if (currentValue.hasNavigationDelegate != newValue.hasNavigationDelegate) {
     hasNavigationDelegate = newValue.hasNavigationDelegate;
   }
+
+  if (currentValue.hasConsoleMessageDelegate != newValue.hasConsoleMessageDelegate) {
+    hasConsoleMessageDelegate = newValue.hasConsoleMessageDelegate;
+  }
+
   if (currentValue.debuggingEnabled != newValue.debuggingEnabled) {
     debuggingEnabled = newValue.debuggingEnabled;
   }
@@ -408,6 +455,7 @@ WebSettings _clearUnchangedWebSettings(
   return WebSettings(
     javascriptMode: javascriptMode,
     hasNavigationDelegate: hasNavigationDelegate,
+    hasConsoleMessageDelegate: hasConsoleMessageDelegate,
     debuggingEnabled: debuggingEnabled,
     userAgent: userAgent,
   );
@@ -446,7 +494,13 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
         _widget.navigationDelegate(request) == NavigationDecision.navigate;
     return allowNavigation;
   }
-
+  @override
+  bool onConsoleMessage({String levelName, String message}) {
+    // TODO: implement onConsoleMessage
+    final ConsoleMessage consoleMessage = ConsoleMessage._(ConsoleMessage.findLevel(levelName), message);
+    final bool allowConsole = _widget.consoleMessageDelegate == null||_widget.consoleMessageDelegate(consoleMessage) == NavigationDecision.navigate;
+    return allowConsole;
+  }
   @override
   void onPageFinished(String url) {
     if (_widget.onPageFinished != null) {
@@ -463,6 +517,8 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
       _javascriptChannels[channel.name] = channel;
     }
   }
+
+
 }
 
 /// Controls a [WebView].

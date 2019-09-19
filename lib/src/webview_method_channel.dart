@@ -35,6 +35,11 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
           url: call.arguments['url'],
           isForMainFrame: call.arguments['isForMainFrame'],
         );
+      case 'onConsoleMessageRequest':
+        return _platformCallbacksHandler.onConsoleMessage(
+            levelName: call.arguments['levelName'],
+            message: call.arguments['message']
+        );
       case 'onPageFinished':
         _platformCallbacksHandler.onPageFinished(call.arguments['url']);
         return null;
@@ -131,6 +136,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
 
     _addIfNonNull('jsMode', settings.javascriptMode?.index);
     _addIfNonNull('hasNavigationDelegate', settings.hasNavigationDelegate);
+    _addIfNonNull('hasConsoleMessageDelegate', settings.hasConsoleMessageDelegate);
     _addIfNonNull('debuggingEnabled', settings.debuggingEnabled);
     _addSettingIfPresent('userAgent', settings.userAgent);
     return map;
