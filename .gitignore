@@ -25,7 +25,8 @@ doc/api/
 **/android/key.properties
 *.jks
 **/android/*.iml
-**/android/**/*.iml
+**/example/**/*.iml
+**/example/android/.gradle/**
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
