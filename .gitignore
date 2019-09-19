@@ -16,7 +16,7 @@ doc/api/
 
 # Android related
 **/android/**/gradle-wrapper.jar
-**/android/.gradle
+**/android/.gradle/
 **/android/captures/
 **/android/gradlew
 **/android/gradlew.bat
@@ -25,6 +25,7 @@ doc/api/
 **/android/key.properties
 *.jks
 **/android/webview_flutter.iml
+**/android/**/app.iml
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
