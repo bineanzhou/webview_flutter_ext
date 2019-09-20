@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, assign) BOOL hasDartNavigationDelegate;
 
+@property(nonatomic, assign) BOOL hasDartConsoleMessageDelegate;
+
 @end
 
 NS_ASSUME_NONNULL_END

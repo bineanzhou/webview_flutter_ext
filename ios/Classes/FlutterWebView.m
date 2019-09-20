@@ -255,6 +255,10 @@
     } else if ([key isEqualToString:@"hasNavigationDelegate"]) {
       NSNumber* hasDartNavigationDelegate = settings[key];
       _navigationDelegate.hasDartNavigationDelegate = [hasDartNavigationDelegate boolValue];
+    } else if ([key isEqualToString:@"hasConsoleMessageDelegate"]){
+      NSNumber* hasDartConsoleMessageDelegate = settings[key];
+        
+      _navigationDelegate.hasDartConsoleMessageDelegate = [hasDartConsoleMessageDelegate boolValue];
     } else if ([key isEqualToString:@"debuggingEnabled"]) {
       // no-op debugging is always enabled on iOS.
     } else if ([key isEqualToString:@"userAgent"]) {
