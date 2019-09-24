@@ -5,10 +5,16 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.ConsoleMessage;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -111,10 +117,20 @@ class FlutterWebViewClient {
     return internalCreateWebViewClientCompat();
   }
 
+  private Activity getActivity(Context context) {
+    while (context instanceof ContextWrapper) {
+      if (context instanceof Activity) {
+        return (Activity)context;
+      }
+      context = ((ContextWrapper)context).getBaseContext();
+    }
+    return null;
+  }
   WebChromeClient createWebChromeClient(boolean hasConsoleMessageDelegate) {
     this.hasConsoleMessageDelegate = hasConsoleMessageDelegate;
 
     return new WebChromeClient(){
+
       @Override
       public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
         if (!FlutterWebViewClient.this.hasConsoleMessageDelegate) {
