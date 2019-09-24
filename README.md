@@ -4,10 +4,11 @@
 
 A Flutter plugin that provides a WebView widget.
 
-添加依赖库：
-
 * support consoleMessageDelegate
 * support Android jsAlert
+
+添加依赖库：
+
 ```
 dependencies:
   webview_flutter:
