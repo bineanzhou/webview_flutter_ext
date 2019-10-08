@@ -58,6 +58,7 @@ class _WebViewExampleState extends State<WebViewExample> {
           // ignore: prefer_collection_literals
           javascriptChannels: <JavascriptChannel>[
             _toasterJavascriptChannel(context),
+            _jxIOSJavascriptChannel(context),
           ].toSet(),
           consoleMessageDelegate: (ConsoleMessage consoleMessage) {
             print('consoleMessageDelegate $consoleMessage}');
@@ -83,6 +84,16 @@ class _WebViewExampleState extends State<WebViewExample> {
   JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
     return JavascriptChannel(
         name: 'Toaster',
+        onMessageReceived: (JavascriptMessage message) {
+          Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text(message.message)),
+          );
+        });
+  }
+
+  JavascriptChannel _jxIOSJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: 'JXiOS',
         onMessageReceived: (JavascriptMessage message) {
           Scaffold.of(context).showSnackBar(
             SnackBar(content: Text(message.message)),
