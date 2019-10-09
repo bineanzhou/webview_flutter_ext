@@ -356,8 +356,9 @@
     [userContentController addScriptMessageHandler:channel name:channelName];
     NSString* wrapperSource = [NSString
         stringWithFormat:@"window.%@ = webkit.messageHandlers.%@;", channelName, channelName];
+      NSString* jsCode = [NSString stringWithFormat:@"var console = {};console.log = function(message){window.webkit.messageHandlers.%@.postMessage(message)};%@;",channelName, wrapperSource];
     WKUserScript* wrapperScript =
-        [[WKUserScript alloc] initWithSource:wrapperSource
+        [[WKUserScript alloc] initWithSource:jsCode
                                injectionTime:WKUserScriptInjectionTimeAtDocumentStart
                             forMainFrameOnly:NO];
     [userContentController addUserScript:wrapperScript];
