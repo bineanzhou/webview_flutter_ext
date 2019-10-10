@@ -48,7 +48,8 @@ class _WebViewExampleState extends State<WebViewExample> {
       // to allow calling Scaffold.of(context) so we can show a snackbar.
       body: Builder(builder: (BuildContext context) {
         return WebView(
-          initialUrl: 'https://bineanzhou.github.io/flutter.github.io/dev_test.html',
+//          initialUrl: 'https://bineanzhou.github.io/flutter.github.io/dev_test.html',
+          initialUrl: 'https://api.toutiaoduoduo.com/www/inapp/checkin/index.html?rnd=0_20191010',
 //          initialUrl: 'https://flutter.dev',
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {
